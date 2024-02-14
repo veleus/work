@@ -1,24 +1,42 @@
 
+from dto.model import Role as model
+from tables.database import Role
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
-from fastapi import APIRouter
-from operations.role import create_task, get_task, update_task,delete_task
-from database import db
-from dto.model import Role
-router = APIRouter()
 
-@router.get('/role/')
-async def get_products(id: int):
-    return get_task(db,id)
+def get_task(db: Session, user_id:str):
+    return db.query(Role).filter(Role.ID == user_id).first()
 
-@router.post('/role/')
-async def post_products(data: Role):
-    return create_task(db,data)
+def create_task(db: Session, data: model):
+    try:
+        exp = Role(Role=data.role)
+        db.add(exp)
+        db.commit()
+        db.refresh(exp)
+        return exp
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
 
-@router.put('/role/')
-async def put_products(data: Role, id: int):
-    return update_task(db,data,id)
+def update_task(db: Session, data: model, id: int):
+    try:
+        exp = db.query(Role).filter(Role.ID == id).first()
+        exp.ID = data.ID
+        exp.Role = data.role
+        db.commit()
+        db.refresh(exp)
+        return exp
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
 
-@router.delete('/role/')
-async def del_products(id: int):
-    return delete_task(db, id)
-
+def delete_task(db: Session, id: int):
+    exp = db.query(Role).filter(Role.ID == id).first()
+    db.delete(exp)
+    db.commit()
+    return exp
