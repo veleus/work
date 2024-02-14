@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Boolean, DECIMAL, ForeignKey, BLOB, TEXT, VARCHAR
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, VARCHAR
+
 from database import Base
-from sqlalchemy.orm import relationship
+
 
 class ProductGroups(Base):
     __tablename__ = 'ProductGroups'
@@ -48,8 +49,8 @@ class Suppliers(Base):
     Country = Column(String(255))
 
 
-class Employees(Base):
-    __tablename__ = 'Employees'
+class User(Base):
+    __tablename__ = 'User'
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Full_Name = Column(String(255))
     Phone = Column(String(255))
@@ -58,7 +59,9 @@ class Employees(Base):
     Country = Column(String(255))
     Login = Column(String(255))
     Password = Column(String(255))
+    Role_User = Column(Integer, ForeignKey('Role.ID'))
 
+    
 class DocumentTypesDDM(Base):
     __tablename__ = 'DocumentTypesDDM'
     ID = Column(Integer, primary_key=True, autoincrement=True)
@@ -94,7 +97,7 @@ class MaterialMovements(Base):
     Document_Base_Number  = Column(Integer, primary_key=True)
     Receipt_Date = Column(Date)
     ID_Contractor = Column(Integer, ForeignKey('Suppliers.ID'), primary_key=True)
-    ID_Employee = Column(Integer, ForeignKey('Employees.ID'))
+    ID_Employee = Column(Integer, ForeignKey('User.ID'))
 
 class MaterialMovementItems(Base):
     __tablename__ = 'MaterialMovementItems'
@@ -147,12 +150,10 @@ class ProdExecution(Base):
     ID = Column(Integer, primary_key=True)
     ID_ProdTask = Column(Date, ForeignKey('ProductionTask.Date'), primary_key=True)
     ID_Stage = Column(Integer ,ForeignKey('Stages.ID'))
-    ID_User = Column(Integer, ForeignKey('Employees.ID'))
+    ID_User = Column(Integer, ForeignKey('User.ID'))
     Date_Start = Column(Date)
     Quantity = Column(Integer)
     Date_Finish = Column(Date)
-
-
 
 class ReadnisStagesToProduct(Base):
     __tablename__ = 'ReadnisStagesToProduct'
@@ -185,7 +186,7 @@ class ProductionMaterialItems(Base):
 class ProductionMaterialRequests(Base):
     __tablename__ = 'ProductionMaterialRequests'
     ID = Column(Integer, primary_key=True)
-    ID_User = Column(Integer, ForeignKey('Employees.ID'))
+    ID_User = Column(Integer, ForeignKey('User.ID'))
     Date = Column(Date)
     Status  = Column(String(255))
     Description = Column(String(255))
@@ -326,22 +327,23 @@ class ProductionProductCosts(Base):
 class ProductionEmployeeAttendance(Base):
     __tablename__ = 'ProductionEmployeeAttendance'
     ID = Column(Integer, primary_key=True, autoincrement=True)
-    ID_User = Column(Integer, ForeignKey('Employees.ID'))
+    ID_User = Column(Integer, ForeignKey('User.ID'))
     Date = Column(Date)
     Attendance_Status = Column(String(255))
 
 
 class Materials(Base):
     __tablename__ = 'Materials'
-    ID= Column(Integer, primary_key=True, autoincrement=True)
-    Name  = Column(String(255))
+    ID = Column(Integer, primary_key=True, autoincrement=True)
+    Name = Column(String(255))
     Description = Column(String(255))
+    Warehouse = Column(Integer, ForeignKey('Warehouse.Warehouse_ID'))
 
 class Machines(Base):
     __tablename__ = 'Machines'
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Machine_Name = Column(String(255))
-    Description= Column(String(255))
+    Description = Column(String(255))
 
 
 class ProductionProductInventory(Base):
@@ -435,7 +437,7 @@ class ProductionMaterialAttributes(Base):
 class ProductionEmployeeSkills(Base):
     __tablename__ = 'ProductionEmployeeSkills'
     ID = Column(Integer,primary_key=True, autoincrement=True)
-    ID_User = Column(Integer, ForeignKey('Employees.ID'))
+    ID_User = Column(Integer, ForeignKey('User.ID'))
     Skill_Name = Column(String((255)))
     Skill_Level = Column(String(255))
 
@@ -458,7 +460,7 @@ class ProductionMaterialAvailability(Base):
 class ProductionWorkOrders(Base):
     __tablename__ = 'ProductionWorkOrders'
     ID = Column(Integer, primary_key=True)
-    ID_User = Column(Integer, ForeignKey('Employees.ID'))
+    ID_User = Column(Integer, ForeignKey('User.ID'))
     Date_Assigned = Column(Date)
     Planned_Start_Date = Column(Date)
     Planned_End_Date = Column(Date)
@@ -520,7 +522,7 @@ class ProductionWorkOrderStatusHistory(Base):
 class ProductionEmployeeProductivity(Base):
     __tablename__ = 'ProductionEmployeeProductivity'
     ID = Column(Integer, primary_key=True)
-    ID_User = Column(Integer, ForeignKey('Employees.ID'))
+    ID_User = Column(Integer, ForeignKey('User.ID'))
     ID_WorkOrderItem = Column(Integer, ForeignKey('ProductionWorkOrderItems.ID'))
     Productivity_Value = Column(Integer)
     Date_Recorded = Column(Date)
@@ -607,3 +609,10 @@ class  ProductionWorkOrderItems(Base):
     Actual_Quantity = Column(Integer)
     Status = Column(String(255))
     Reason_Cancelled = Column(String(255))
+
+
+class Role(Base):
+    __tablename__ = 'Role'
+    ID = Column(Integer, primary_key=True, autoincrement=True)
+    Role = Column(String(255))  # Add index=True to create an index on this column
+    

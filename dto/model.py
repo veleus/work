@@ -49,11 +49,14 @@ class Employee(BaseModel):
     County: str
     Login: str
     Password: str
-
+    Role: str
 class ReadnisStagesToMaterial(BaseModel):
     ID_ProdExe: int
     ID_Material: int
     Prod_Quantity: int
+
+class Role(BaseModel):
+    role: str
 
 class DocumentTypesDDM(BaseModel):
     

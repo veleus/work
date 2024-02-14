@@ -23,13 +23,13 @@ from routers import (
     productionTask, productionWorkOrderItems, productionWorkOrders, productionWorkOrderStages, 
     productionWorkOrderStatus, productionWorkOrderStatusHistory, products, readnisStagesToMaterial, 
     readnisStagesToProduct, stages, stagesToMaterial, supplierOrderItems, 
-    supplierOrders, suppliers, techMap, warehouse, productionMaterialItems, productionMaterialTransfers, materials, products, machines,
+    supplierOrders, suppliers, techMap, warehouse, productionMaterialItems, productionMaterialTransfers, materials, products, machines, role
 )
 # ProductionMaterialTransfers, Materials, Machines, ProductionMaterialAttributes, Quantity_Remaining
 app = FastAPI()
 
 app.include_router(documentTypesDDM.router, tags=['documentTypesDDM'])
-app.include_router(employees.router, tags=['employees'])
+app.include_router(employees.router, tags=['user'])
 app.include_router(materialMovementItems.router, tags=['materialMovementItems'])
 app.include_router(materialMovements.router, tags=['materialMovements'])
 app.include_router(prodExecution.router, tags=['prodExecution'])
@@ -97,6 +97,6 @@ app.include_router(productionMaterialTransfers.router, tags=['productionMaterial
 app.include_router(materials.router, tags=['materials'])
 
 app.include_router(machines.router, tags=['machines'])
-
+app.include_router(role.router, tags=['role'])
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
